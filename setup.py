@@ -27,6 +27,7 @@ setup(
     description="Cb is a blog building tool based on tankywoo/simiki.",
     license="MIT License",
     packages=find_packages(),
+    package_data={'yeopy': ['templates/*.tpl']},
     include_package_data=True,
     install_requires=requires,
     entry_points=entry_points,
