@@ -30,6 +30,9 @@ from docopt import docopt
 
 from cb import __version__
 from cb.log import logging_init
+from cb.commands import (
+    init
+)
 
 logger = logging.getLogger(__name__)
 
@@ -43,18 +46,24 @@ def main():
     if args['init']:
         # The generated blog code's path.
         blog_root_path = args['-p'] if args['-p'] else os.getcwd()
+        init(blog_root_path)
+        logger.info('Init your blog.')
 
     # Start a web server to debug.
     elif args['server']:
-        pass
+        logger.info('Start server.')
 
     # Build the source.
     elif args['build']:
-        pass
+        logger.info('Build done.')
 
     # Post a new md.
     elif args['new']:
-        pass
+        logger.info('New topic.')
+
+    # Deploy to github page.
+    elif args['deploy']:
+        logger.info('Deploy to Github Page.')
 
     logger.info('Done.')
 
