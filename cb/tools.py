@@ -105,3 +105,10 @@ def listdir_nohidden(path):
             f = unicode(f, "utf-8")
         if not f.startswith('.'):
             yield f
+
+
+def copy_file(src, dst):
+    try:
+        shutil.copyfile(src, dst)
+    except (shutil.Error, IOError) as e:
+        logger.error(str(e))

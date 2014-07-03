@@ -3,12 +3,11 @@
 
 from __future__ import absolute_import
 
-import logging
 from logging import (
     getLogger, Formatter, StreamHandler
 )
 
-from cb import utils
+from cb import tools
 
 
 class ANSIFormatter(Formatter):
@@ -26,7 +25,7 @@ class ANSIFormatter(Formatter):
         msg = record.getMessage()
         rln = record.levelname
         if rln in lvl2color:
-            return "[{}]: {}".format(utils.color_msg(lvl2color[rln], rln), msg.encode('utf-8'))
+            return "[{}]: {}".format(tools.color_msg(lvl2color[rln], rln), msg.encode('utf-8'))
         else:
             return msg
 
