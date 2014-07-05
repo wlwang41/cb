@@ -31,7 +31,7 @@ from docopt import docopt
 from cb import __version__
 from cb.log import logging_init
 from cb.commands import (
-    init
+    init, server
 )
 
 logger = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ def main():
 
     # Start a web server to debug.
     elif args['server']:
-        logger.info('Start server.')
+        server(os.path.join(os.getcwd(), 'public'))
 
     # Build the source.
     elif args['build']:

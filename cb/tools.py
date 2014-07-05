@@ -6,10 +6,14 @@ from __future__ import (
 )
 
 import os
+import sys
 import shutil
 import errno
 import logging
 from os import path as osp
+
+import yaml
+import markdown
 
 logger = logging.getLogger(__name__)
 
@@ -112,3 +116,77 @@ def copy_file(src, dst):
         shutil.copyfile(src, dst)
     except (shutil.Error, IOError) as e:
         logger.error(str(e))
+
+
+def write_file(path, content):
+    with open(path, 'w') as f:
+        f.write(content)
+
+
+def read_file(path):
+    with open(path, 'r') as f:
+        return f.read()
+
+
+def check_config(data):
+    """Check if metadata is right
+
+    TODO(crow): check more
+    """
+
+    is_right = True
+
+    if "title" not in data:
+        logging.error("No 'title' in _config.yml")
+        is_right = False
+
+    return is_right
+
+
+def get_ymal_data(data):
+    """Get metadata and validate them
+
+    :param data: metadata in yaml format
+    """
+    try:
+        format_data = yaml.load(data)
+    except yaml.YAMLError, e:
+        msg = "Yaml format error: {}".format(
+            unicode(str(e), "utf-8")
+        )
+        logging.error(msg)
+        sys.exit(1)
+
+    if not check_config(format_data):
+        sys.exit(1)
+
+    return format_data
+
+
+def set_markdown_extensions(site_settings):
+    """Set the extensions for markdown parser"""
+    # Base markdown extensions support "fenced_code".
+    markdown_extensions = ["fenced_code"]
+    if site_settings["pygments"]:
+        markdown_extensions.extend([
+            "extra",
+            "codehilite(css_class=hlcode)",
+            "toc(title=Table of Contents)"
+        ])
+
+    return markdown_extensions
+
+
+def parse_markdown(markdown_content):
+    """Parse markdown text to html.
+
+    :param markdown_content: Markdown text lists #TODO#
+    """
+    markdown_extensions = set_markdown_extensions()
+
+    html_content = markdown.markdown(
+        markdown_content,
+        extensions=markdown_extensions,
+    )
+
+    return html_content

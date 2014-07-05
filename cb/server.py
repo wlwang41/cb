@@ -9,7 +9,7 @@ import logging
 import SimpleHTTPServer
 import SocketServer
 
-from cb.utils import check_path_exists
+from cb.tools import check_path_exists
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ class Reuse_TCPServer(SocketServer.TCPServer):
     allow_reuse_address = True
 
 
-def server(path, port=8000):
+def preview(path, port=8000):
     if check_path_exists(path):
         os.chdir(path)
     else:
@@ -53,4 +53,4 @@ if __name__ == "__main__":
         path = os.path.realpath("html")
         port = 8000
 
-    server(path, port)
+    preview(path, port)
