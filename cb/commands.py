@@ -213,32 +213,28 @@ class Command(object):
 
     def build(self, filenames):
         # generate pages
-        if filenames:
-            # get all target md files
-            file_paths = []
-            for root, dirs, files in os.walk(os.path.join(os.getcwd(), 'source')):
-                for i in files:
+        # get all target md files
+        file_paths = []
+        for root, dirs, files in os.walk(os.path.join(os.getcwd(), 'source')):
+            for i in files:
+                if filenames:
                     if i in filenames and tools.check_extension(i):
                         file_paths.append(os.path.join(root, i))
+                else:
+                    if tools.check_extension(i):
+                        file_paths.append(os.path.join(root, i))
 
-            page_datas = self._get_page_data(file_paths)
+        page_datas = self._get_page_data(file_paths)
 
-            for k, v in page_datas.iteritems():
-                self._generate_page(k.split('/')[-1], v)
+        for k, v in page_datas.iteritems():
+            self._generate_page(k.split('/')[-1], v)
 
-            # cp static including to the theme
-            self._cp_static()
-            # generate index
+        # cp static including to the theme
+        self._cp_static()
+        # generate index
 
-            index_data = self._get_index_data(file_paths)
-            self._generate_index(index_data)
-
-        else:
-            # build all
-            # delete all files in public
-            # convert to html
-            # move to public
-            pass
+        index_data = self._get_index_data(file_paths)
+        self._generate_index(index_data)
 
     def new(self):
         pass

@@ -158,7 +158,8 @@ pre code {
 #header ul{
     list-style: none;
     padding: 0;
-    margin: 0px 238px;
+    margin: 0px auto;
+    width: 750px;
     /* text-align: center; */
 }
 
