@@ -9,7 +9,7 @@
     {{ page.content }}
   {% else %}
   <div class="category_item">
-    {% for category_name, pages in site.structure.iteritems() %}
+    {% for category_name, pages in structure.iteritems() %}
     {# Only list second-level directory #}
       {% if site.default_ext not in category_name %}
     <div class="category">
@@ -19,7 +19,7 @@
       <ul>
         {%- for page_file, page_metadata in pages.iteritems() %}
           {% if site.default_ext in page_file %}
-        <li class="pagelist"><a href="./{{ category_name }}/{{ page_metadata.name }}.html">{{ page_metadata.title }}</a></li>
+        <li class="pagelist"><a href="./content/{{ category_name }}/{{ page_metadata.name }}.html">{{ page_metadata.title }}</a></li>
           {% endif %}
         {%- endfor %}
       </ul>

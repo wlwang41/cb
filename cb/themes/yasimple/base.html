@@ -10,14 +10,31 @@
     </head>
 
     <body>
+        <div id="header">
+            <ul>
+                <li>
+                    <a href="/">{{ site.title }}</a>
+                </li>
+                <li>
+                    <a href="/">class one</a>
+                </li>
+                <li>
+                    <a href="/">class two</a>
+                </li>
+                <li>
+                    <a href="http://aboutcrow.herokuapp.com/" target="_blank">关于我</a>
+                </li>
+            </ul>
+        </div>
         <div id="container">
             {% block container %}
             {% endblock %}
         </div>
         <div id="footer">
             <span>
-                Copyright © 2012-2014 {{ site.author }}.
+                Copyright © now-forever {{ site.author }}.
                 Powered by <a href="https://github.com/wlwang41/cb" target="_blank">Cb</a>.
+                UI by <a href="https://github.com/tankywoo/wiki.tankywoo.com">yasimple</a>
             </span>
         </div>
     </body>

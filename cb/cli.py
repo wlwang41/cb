@@ -66,10 +66,12 @@ def main():
     # Post a new md.
     elif args['new']:
         logger.info('New topic.')
+        logger.warn('Not finish yet.')
 
     # Deploy to github page.
     elif args['deploy']:
         logger.info('Deploy to Github Page.')
+        logger.warn('Not finish yet.')
 
     logger.info('Done.')
 

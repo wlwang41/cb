@@ -22,14 +22,14 @@ class Command(object):
         self.site_config = self._get_config(config_path)
         # self.site_config = self._get_config(os.path.join(os.getcwd(), '_config.yml'))
 
-        _template_path = os.path.join(
+        self.template_path = os.path.join(
             os.getcwd(),
             self.site_config["themes_dir"],
             self.site_config["theme"]
         )
         try:
             self.env = Environment(
-                loader=FileSystemLoader(_template_path)
+                loader=FileSystemLoader(self.template_path)
             )
         except TemplateError, e:
             logging.error(str(e))
@@ -46,7 +46,7 @@ class Command(object):
             "source": "content",
             "destination": "output",
             "themes_dir": "themes",
-            "theme": "yasimple",
+            "theme": "",
             "default_ext": "md",
             "pygments": True,
             "debug": False,
@@ -137,11 +137,20 @@ class Command(object):
         return rv
 
     def _render_html(self, template_file, data):
-        data['site'] = self.site_config
-        data['page'] = data
+        _data = {}
+        _data['site'] = self.site_config
+
+        if template_file == 'page.html':
+            _data['page'] = data
+        elif template_file == 'index.html':
+            _data['structure'] = data
+        else:
+            # TODO(crow): else template logic
+            logger.error('Unsupported template.')
+
         try:
             template = self.env.get_template(template_file)
-            html = template.render(data)
+            html = template.render(_data)
         except TemplateError, e:
             logging.error("Unable to load template {}: {}"
                           .format(template_file, str(e)))
@@ -160,16 +169,50 @@ class Command(object):
         with codecs.open(os.path.join(html_path, filename.split('.')[0] + '.html'), 'wb', 'utf-8') as f:
             f.write(page_html)
 
-    def _get_index_data(self):
-        pass
+    def _get_index_data(self, file_paths):
+        # category and page
+        rv = {}
+        for i in file_paths:
+            # TODO(crow): only support first category
+            _ = i.split('/')
+            category = _[-2]
+            name = _[-1].split('.')[0]
+            page_config, md = self._get_config_and_content(i)
+            rv.setdefault(category, {})
+            rv[category].update(
+                {
+                    i: {
+                        'title': page_config.get('title', ''),
+                        'name': name,
+                        'date': page_config.get('date', '')
+                    }
+                }
+            )
 
-    def _generate_index(self):
-        pass
+        return rv
+
+    def _generate_index(self, index_data):
+        index_html = self._render_html('index.html', index_data)
+
+        html_path = os.path.join(os.getcwd(), 'public', 'index.html')
+
+        with codecs.open(html_path, 'wb', 'utf-8') as f:
+            f.write(index_html)
+
+    def _cp_static(self):
+        src_static_path = os.path.join(self.template_path, 'static')
+
+        dst_static_path = os.path.join(os.getcwd(), 'public', 'static')
+
+        if tools.check_path_exists(dst_static_path):
+            tools.emptytree(dst_static_path)
+        else:
+            tools.mkdir_p(dst_static_path)
+
+        tools.copytree(src_static_path, dst_static_path)
 
     def build(self, filenames):
         # generate pages
-        # generate index
-        # move css
         if filenames:
             # get all target md files
             file_paths = []
@@ -182,6 +225,13 @@ class Command(object):
 
             for k, v in page_datas.iteritems():
                 self._generate_page(k.split('/')[-1], v)
+
+            # cp static including to the theme
+            self._cp_static()
+            # generate index
+
+            index_data = self._get_index_data(file_paths)
+            self._generate_index(index_data)
 
         else:
             # build all
