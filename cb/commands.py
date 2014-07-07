@@ -4,6 +4,7 @@
 import os
 import sys
 import logging
+import datetime
 import codecs
 from copy import deepcopy
 
@@ -183,7 +184,7 @@ class Command(object):
                 {
                     i: {
                         'title': page_config.get('title', ''),
-                        'name': name,
+                        'name': name.decode('utf-8'),
                         'date': page_config.get('date', '')
                     }
                 }
@@ -197,6 +198,7 @@ class Command(object):
         html_path = os.path.join(os.getcwd(), 'public', 'index.html')
 
         with codecs.open(html_path, 'wb', 'utf-8') as f:
+        # with open(html_path, 'wb') as f:
             f.write(index_html)
 
     def _cp_static(self):
@@ -215,14 +217,19 @@ class Command(object):
         # generate pages
         # get all target md files
         file_paths = []
+        all_file_paths = []
         for root, dirs, files in os.walk(os.path.join(os.getcwd(), 'source')):
             for i in files:
+                if not tools.check_extension(i):
+                    continue
+
+                all_file_paths.append(os.path.join(root, i))
+
                 if filenames:
-                    if i in filenames and tools.check_extension(i):
+                    if i in filenames:
                         file_paths.append(os.path.join(root, i))
                 else:
-                    if tools.check_extension(i):
-                        file_paths.append(os.path.join(root, i))
+                    file_paths.append(os.path.join(root, i))
 
         page_datas = self._get_page_data(file_paths)
 
@@ -233,14 +240,51 @@ class Command(object):
         self._cp_static()
         # generate index
 
-        index_data = self._get_index_data(file_paths)
+        print file_paths
+        print all_file_paths
+
+        index_data = self._get_index_data(all_file_paths)
         self._generate_index(index_data)
 
-    def new(self):
-        pass
+    def _format_new_input(self, title, category, output_file):
+        if not output_file:
+            _ = title.replace(os.sep, " slash ")
+            output_file = "{}.md".format("-".join(_.split()).lower())
+        date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        title = title
+        category = category
+
+        return title, category, output_file, date
+
+    def new(self, title, category, output_file):
+        title, category, output_file, date = self._format_new_input(title, category, output_file)
+        try:
+            meta = "\n".join([
+                "---",
+                "title: \"{}\"".format(title),
+                "date: {}".format(date),
+                "---",
+            ]) + "\n\n"
+        except Exception, e:
+            logger.error(str(e))
+            sys.exit(1)
+
+        category_path = os.path.join(os.getcwd(), 'source', category)
+        if not tools.check_path_exists(category_path):
+            tools.mkdir_p(category_path)
+            logger.info("Creating category {}.".format(category))
+
+        output_path = os.path.join(category_path, output_file)
+        if tools.check_path_exists(output_path):
+            logger.warning("file exists: {}".format(output_path))
+        else:
+            logger.info("Creating new post: {}".format(output_path))
+            with open(output_path, "wb") as f:
+            # with codecs.open(output_path, "wb", "utf-8") as f:
+                f.write(meta)
 
     def deploy(self):
-        pass
+        logger.warn('You can deploy public to vps or github page.')
 
 
 def init(path):

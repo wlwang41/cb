@@ -64,13 +64,12 @@ def main():
         logger.info('Build done.')
 
     # Post a new md.
-    elif args['new']:
+    elif args['new'] and args['-t']:
+        command.new(args['-t'], args['-c'], args['-f'])
         logger.info('New topic.')
-        logger.warn('Not finish yet.')
 
     # Deploy to github page.
     elif args['deploy']:
-        logger.info('Deploy to Github Page.')
         logger.warn('Not finish yet.')
 
     logger.info('Done.')

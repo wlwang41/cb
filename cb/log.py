@@ -25,7 +25,10 @@ class ANSIFormatter(Formatter):
         msg = record.getMessage()
         rln = record.levelname
         if rln in lvl2color:
-            return "[{}]: {}".format(tools.color_msg(lvl2color[rln], rln), msg.encode('utf-8'))
+            if isinstance(msg, unicode):
+                return "[{}]: {}".format(tools.color_msg(lvl2color[rln], rln), msg.encode('utf-8'))
+            else:
+                return "[{}]: {}".format(tools.color_msg(lvl2color[rln], rln), msg)
         else:
             return msg
 
