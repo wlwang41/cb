@@ -177,12 +177,12 @@ def set_markdown_extensions(site_settings):
     return markdown_extensions
 
 
-def parse_markdown(markdown_content):
+def parse_markdown(markdown_content, site_settings):
     """Parse markdown text to html.
 
     :param markdown_content: Markdown text lists #TODO#
     """
-    markdown_extensions = set_markdown_extensions()
+    markdown_extensions = set_markdown_extensions(site_settings)
 
     html_content = markdown.markdown(
         markdown_content,

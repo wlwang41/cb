@@ -7,8 +7,9 @@ Cb CLI
 Usage:
   cb init [-p <path>]
   cb new -t <title> -c <category> [-f <file>]
-  cb build [--delete]
+  cb build [-s <files> ...]
   cb server
+  cb deploy
   cb -h | --help
   cb -V | --version
 
@@ -19,7 +20,7 @@ Options:
   -t <title>             Specify the new post title.
   -f <file>              Specify the new post filename.
   -p <path>              Destination path.
-  --delete               Delete the contents of output directory before generate.
+  -s <files>             Specify the files to build.
 
 """
 
@@ -31,7 +32,7 @@ from docopt import docopt
 from cb import __version__
 from cb.log import logging_init
 from cb.commands import (
-    init, server
+    Command, init, server
 )
 
 logger = logging.getLogger(__name__)
@@ -48,13 +49,18 @@ def main():
         blog_root_path = args['-p'] if args['-p'] else os.getcwd()
         init(blog_root_path)
         logger.info('Init your blog.')
+        return
+
+    command = Command(os.path.join(os.getcwd(), '_config.yml'))
 
     # Start a web server to debug.
-    elif args['server']:
+    if args['server']:
         server(os.path.join(os.getcwd(), 'public'))
 
     # Build the source.
     elif args['build']:
+        build_files = args['-s'] if args['-s'] else None
+        command.build(build_files)
         logger.info('Build done.')
 
     # Post a new md.

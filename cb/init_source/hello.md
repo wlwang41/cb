@@ -1,6 +1,5 @@
 ---
 title: "Hello World"
-layout: page
 date: 2014-06-12 00:00
 ---
 
