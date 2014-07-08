@@ -9,7 +9,6 @@ Usage:
   cb new -t <title> -c <category> [-f <file>]
   cb build [-s <files> ...]
   cb server
-  cb deploy
   cb -h | --help
   cb -V | --version
 
@@ -67,10 +66,6 @@ def main():
     elif args['new'] and args['-t']:
         command.new(args['-t'], args['-c'], args['-f'])
         logger.info('New topic.')
-
-    # Deploy to github page.
-    elif args['deploy']:
-        logger.warn('Not finish yet.')
 
     logger.info('Done.')
 
