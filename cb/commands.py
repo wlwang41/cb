@@ -240,9 +240,6 @@ class Command(object):
         self._cp_static()
         # generate index
 
-        print file_paths
-        print all_file_paths
-
         index_data = self._get_index_data(all_file_paths)
         self._generate_index(index_data)
 
