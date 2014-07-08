@@ -28,7 +28,7 @@ setup(
     description="Cb is a blog building tool inspired by tankywoo/simiki.",
     license="MIT License",
     packages=find_packages(),
-    # include_package_data=True,
+    include_package_data=True,
     install_requires=requires,
     entry_points=entry_points,
 )
