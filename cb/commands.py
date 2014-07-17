@@ -192,6 +192,16 @@ class Command(object):
 
         return rv
 
+    def _get_feed_data(self, file_paths):
+        """ get data to display in feed file
+        TODO
+        """
+
+    def _generate_feed(self, feed_data):
+        """ render feed file with data
+        TODO
+        """
+
     def _generate_index(self, index_data):
         index_html = self._render_html('index.html', index_data)
 
@@ -238,10 +248,15 @@ class Command(object):
 
         # cp static including to the theme
         self._cp_static()
-        # generate index
 
+        # generate index
         index_data = self._get_index_data(all_file_paths)
         self._generate_index(index_data)
+
+        # generate feed
+        # TODO
+        feed_data = self._get_feed_data(all_file_paths)
+        self._generate_feed(feed_data)
 
     def _format_new_input(self, title, category, output_file):
         if not output_file:
