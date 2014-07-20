@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title>{{ site.title }}</title>
+  <link href="{{ site.url }}/"/>
+  <link type= "application/atom+xml" href="{{ site.url }}/atom.xml" rel="self"/>
+  <updated>2014-07-20</updated>
+  <id>{{ site.url }}</id>
+  <author>
+    <name>{{ site.author }}</name>
+  </author>
+
+  {% for category, posts in structure.iteritems() %}
+  {%- for page_num, post in posts.iteritems() %}
+  <entry>
+    <title>{{ post.title }}</title>
+    <link type="text/html" rel="alternate" href="{{ site.url }}/content/{{ category }}/{{ post.name }}.html"/>
+    <id>{{ site.url }}/content/{{ category }}/{{ post.name }}.html</id>
+    <published>{{ post.date }}</published>
+    <updated>{{ post.date }}</updated>
+    <content type="html">
+      {{ post.content | e }}
+    </content>
+  </entry>
+  {%- endfor %}
+  {% endfor %}
+</feed>

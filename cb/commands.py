@@ -145,6 +145,8 @@ class Command(object):
             _data['page'] = data
         elif template_file == 'index.html':
             _data['structure'] = data
+        elif template_file == 'atom.xml':
+            _data['structure'] = data
         else:
             # TODO(crow): else template logic
             logger.error('Unsupported template.')
@@ -192,24 +194,48 @@ class Command(object):
 
         return rv
 
-    def _get_feed_data(self, file_paths):
-        """ get data to display in feed file
-        TODO
-        """
-
-    def _generate_feed(self, feed_data):
-        """ render feed file with data
-        TODO
-        """
-
     def _generate_index(self, index_data):
         index_html = self._render_html('index.html', index_data)
 
         html_path = os.path.join(os.getcwd(), 'public', 'index.html')
 
         with codecs.open(html_path, 'wb', 'utf-8') as f:
-        # with open(html_path, 'wb') as f:
+            # with open(html_path, 'wb') as f:
             f.write(index_html)
+
+    def _get_feed_data(self, file_paths):
+        """ get data to display in feed file
+        """
+        rv = {}
+        for i in file_paths:
+            # TODO(crow): only support first category
+            _ = i.split('/')
+            category = _[-2]
+            name = _[-1].split('.')[0]
+            page_config, md = self._get_config_and_content(i)
+            parsed_md = tools.parse_markdown(md, self.site_config)
+            rv.setdefault(category, {})
+            rv[category].update(
+                {
+                    i: {
+                        'title': page_config.get('title', ''),
+                        'name': name.decode('utf-8'),
+                        'content': parsed_md,
+                        'date': page_config.get('date', '')
+                        }
+                    }
+                )
+        return rv
+
+    def _generate_feed(self, feed_data):
+        """ render feed file with data
+        """
+        atom_feed = self._render_html('atom.xml', feed_data)
+
+        feed_path = os.path.join(os.getcwd(), 'public', 'atom.xml')
+
+        with codecs.open(feed_path, 'wb', 'utf-8') as f:
+            f.write(atom_feed)
 
     def _cp_static(self):
         src_static_path = os.path.join(self.template_path, 'static')
@@ -254,7 +280,6 @@ class Command(object):
         self._generate_index(index_data)
 
         # generate feed
-        # TODO
         feed_data = self._get_feed_data(all_file_paths)
         self._generate_feed(feed_data)
 
@@ -316,6 +341,7 @@ def init(path):
     tools.copy_file(config_path, os.path.join(path, '_config.yml'))
 
     # 4. cp themes
+    print themes_path
     dst_themes_path = os.path.join(path, 'themes')
     tools.mkdir_p(dst_themes_path)
     tools.copytree(themes_path, dst_themes_path)
