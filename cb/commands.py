@@ -341,7 +341,6 @@ def init(path):
     tools.copy_file(config_path, os.path.join(path, '_config.yml'))
 
     # 4. cp themes
-    print themes_path
     dst_themes_path = os.path.join(path, 'themes')
     tools.mkdir_p(dst_themes_path)
     tools.copytree(themes_path, dst_themes_path)
