@@ -26,6 +26,8 @@ Cb is my blog building tool inspired by [simiki](https://github.com/tankywoo/sim
     mkdir YOUR_BLOG_PATH && cb YOUR_BLOG_PATH
     cb init
 
+After initialization, you should add your own info in *_config.yml* file.
+
 ### New topic
 
     cb new -t 'first blog' -c 'note'
