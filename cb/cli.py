@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    logging_init(logging.DEBUG)
+    logging_init(logging.INFO)
     # Get input info from docopt.
     args = docopt(__doc__, version='cb {}'.format(__version__))
 
